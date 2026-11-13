@@ -1,18 +1,304 @@
 @import "tailwindcss";
 
+/* ============================================================
+   THEME SYSTEM — CSS Custom Properties
+   ============================================================
+   Two root axes:
+     1. data-theme="dark"  / data-theme="light"
+     2. data-accent="blue" / data-accent="purple" / data-accent="seagreen"
+
+   To change a colour site-wide, edit only the values below.
+   Every component reads from these variables — nothing is
+   hard-coded in JSX or component CSS.
+   ============================================================ */
+
+/* ── Fallback (dark + blue) so SSR / first-paint never flashes ── */
 :root {
+  /* ─── Structural / layout colours ─────────────────────────── */
+  --bg-base:        #080d18;    /* page background            */
+  --bg-surface:     #0d1524;    /* cards / panels             */
+  --bg-surface-2:   #0b1220;    /* slightly lighter surface   */
+  --bg-surface-3:   #101a2b;    /* feature card gradient start*/
+  --bg-elevated:    #111c2e;    /* floating badges / tooltips */
+
+  --border-subtle:  rgba(255,255,255,0.07);
+  --border-mid:     rgba(255,255,255,0.10);
+
+  --text-primary:   #f8fafc;    /* headings / body text       */
+  --text-secondary: #94a3b8;    /* slate-400 equivalent       */
+  --text-muted:     #475569;    /* slate-600 equivalent       */
+  --text-xmuted:    #334155;    /* slate-700 equivalent       */
+
+  /* ─── Accent colours — BLUE (default) ─────────────────────── */
+  --accent-50:      #eff6ff;
+  --accent-100:     #dbeafe;
+  --accent-200:     #bfdbfe;
+  --accent-300:     #93c5fd;
+  --accent-400:     #60a5fa;
+  --accent-500:     #3b82f6;
+  --accent-600:     #2563eb;
+  --accent-700:     #1d4ed8;
+  --accent-800:     #1e40af;
+  --accent-900:     #1e3a8a;
+
+  /* Semantic tokens derived from accent palette */
+  --accent-primary:       var(--accent-500);
+  --accent-primary-hover: var(--accent-400);
+  --accent-primary-text:  #ffffff;
+  --accent-soft-bg:       rgba(59,130,246,0.07);
+  --accent-soft-bg-hover: rgba(59,130,246,0.10);
+  --accent-soft-border:   rgba(96,165,250,0.20);
+  --accent-soft-border-hover: rgba(96,165,250,0.30);
+  --accent-glow:          rgba(37,99,235,0.16);
+  --accent-glow-card:     rgba(59,130,246,0.04);
+  --accent-glow-card-hover: rgba(59,130,246,0.10);
+  --accent-text:          var(--accent-300);
+  --accent-text-muted:    rgba(147,197,253,0.80);
+  --accent-shadow:        rgba(30,58,138,0.40);
+  --accent-gradient-from: #142642;
+  --accent-gradient-via:  #101c30;
+  --accent-gradient-to:   #0b1220;
+  --accent-line-color:    rgba(147,197,253,0.20);
+  --accent-line-bg:       rgba(147,197,253,0.30);
+  --accent-hr-bg:         rgba(96,165,250,0.50);
+
+  /* ─── Emerald (always fixed, used for status badges) ───────── */
+  --status-bg:      rgba(52,211,153,0.08);
+  --status-border:  rgba(52,211,153,0.20);
+  --status-text:    #6ee7b7;
+  --status-dot:     #34d399;
+
+  /* ─── Typography ───────────────────────────────────────────── */
   font-family: Inter, ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #f8fafc;
-  background: #080d18;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-optical-sizing: auto;
   scroll-behavior: smooth;
+  color: var(--text-primary);
+  background: var(--bg-base);
 }
 
+/* ================================================================
+   DARK THEME  (default — explicit declaration for clarity)
+   ================================================================ */
+[data-theme="dark"] {
+  --bg-base:        #080d18;
+  --bg-surface:     #0d1524;
+  --bg-surface-2:   #0b1220;
+  --bg-surface-3:   #101a2b;
+  --bg-elevated:    #111c2e;
+
+  --border-subtle:  rgba(255,255,255,0.07);
+  --border-mid:     rgba(255,255,255,0.10);
+
+  --text-primary:   #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted:     #475569;
+  --text-xmuted:    #334155;
+}
+
+/* ================================================================
+   LIGHT THEME
+   ================================================================ */
+[data-theme="light"] {
+  --bg-base:        #f0f4f8;
+  --bg-surface:     #ffffff;
+  --bg-surface-2:   #f8fafc;
+  --bg-surface-3:   #eef2f7;
+  --bg-elevated:    #ffffff;
+
+  --border-subtle:  rgba(0,0,0,0.07);
+  --border-mid:     rgba(0,0,0,0.12);
+
+  --text-primary:   #0f172a;
+  --text-secondary: #475569;
+  --text-muted:     #94a3b8;
+  --text-xmuted:    #cbd5e1;
+
+  /* Redefine accent semantic tokens for light — softer tints */
+  --accent-soft-bg:       rgba(59,130,246,0.09);
+  --accent-soft-bg-hover: rgba(59,130,246,0.14);
+  --accent-glow:          rgba(37,99,235,0.10);
+  --accent-glow-card:     rgba(59,130,246,0.03);
+  --accent-glow-card-hover: rgba(59,130,246,0.08);
+  --accent-shadow:        rgba(30,58,138,0.20);
+  --accent-gradient-from: #dbeafe;
+  --accent-gradient-via:  #eff6ff;
+  --accent-gradient-to:   #f8fafc;
+  --accent-line-color:    rgba(37,99,235,0.15);
+  --accent-line-bg:       rgba(37,99,235,0.25);
+  --accent-hr-bg:         rgba(59,130,246,0.40);
+
+  --status-bg:      rgba(16,185,129,0.08);
+  --status-border:  rgba(16,185,129,0.25);
+  --status-text:    #065f46;
+  --status-dot:     #10b981;
+}
+
+/* ================================================================
+   ACCENT PALETTE — BLUE  (default, same as :root above)
+   ================================================================ */
+[data-accent="blue"] {
+  --accent-50:      #eff6ff;
+  --accent-200:     #bfdbfe;
+  --accent-300:     #93c5fd;
+  --accent-400:     #60a5fa;
+  --accent-500:     #3b82f6;
+  --accent-600:     #2563eb;
+  --accent-900:     #1e3a8a;
+
+  --accent-primary:       #3b82f6;
+  --accent-primary-hover: #60a5fa;
+  --accent-primary-text:  #ffffff;
+  --accent-soft-bg:       rgba(59,130,246,0.07);
+  --accent-soft-border:   rgba(96,165,250,0.20);
+  --accent-soft-border-hover: rgba(96,165,250,0.30);
+  --accent-glow:          rgba(37,99,235,0.16);
+  --accent-glow-card:     rgba(59,130,246,0.04);
+  --accent-glow-card-hover: rgba(59,130,246,0.10);
+  --accent-text:          #93c5fd;
+  --accent-text-muted:    rgba(147,197,253,0.80);
+  --accent-shadow:        rgba(30,58,138,0.40);
+  --accent-gradient-from: #142642;
+  --accent-gradient-via:  #101c30;
+  --accent-gradient-to:   #0b1220;
+  --accent-line-color:    rgba(147,197,253,0.20);
+  --accent-line-bg:       rgba(147,197,253,0.30);
+  --accent-hr-bg:         rgba(96,165,250,0.50);
+}
+
+[data-theme="light"][data-accent="blue"] {
+  --accent-primary:       #2563eb;
+  --accent-primary-hover: #3b82f6;
+  --accent-soft-bg:       rgba(37,99,235,0.09);
+  --accent-soft-border:   rgba(37,99,235,0.25);
+  --accent-soft-border-hover: rgba(37,99,235,0.40);
+  --accent-glow:          rgba(37,99,235,0.10);
+  --accent-glow-card:     rgba(37,99,235,0.03);
+  --accent-glow-card-hover: rgba(37,99,235,0.08);
+  --accent-text:          #2563eb;
+  --accent-text-muted:    rgba(37,99,235,0.70);
+  --accent-shadow:        rgba(30,58,138,0.20);
+  --accent-gradient-from: #dbeafe;
+  --accent-gradient-via:  #eff6ff;
+  --accent-gradient-to:   #f8fafc;
+  --accent-line-color:    rgba(37,99,235,0.15);
+  --accent-line-bg:       rgba(37,99,235,0.25);
+  --accent-hr-bg:         rgba(59,130,246,0.40);
+}
+
+/* ================================================================
+   ACCENT PALETTE — PURPLE
+   ================================================================ */
+[data-accent="purple"] {
+  --accent-50:      #faf5ff;
+  --accent-200:     #e9d5ff;
+  --accent-300:     #d8b4fe;
+  --accent-400:     #c084fc;
+  --accent-500:     #a855f7;
+  --accent-600:     #9333ea;
+  --accent-900:     #581c87;
+
+  --accent-primary:       #a855f7;
+  --accent-primary-hover: #c084fc;
+  --accent-primary-text:  #ffffff;
+  --accent-soft-bg:       rgba(168,85,247,0.07);
+  --accent-soft-border:   rgba(192,132,252,0.20);
+  --accent-soft-border-hover: rgba(192,132,252,0.30);
+  --accent-glow:          rgba(147,51,234,0.16);
+  --accent-glow-card:     rgba(168,85,247,0.04);
+  --accent-glow-card-hover: rgba(168,85,247,0.10);
+  --accent-text:          #d8b4fe;
+  --accent-text-muted:    rgba(216,180,254,0.80);
+  --accent-shadow:        rgba(88,28,135,0.40);
+  --accent-gradient-from: #2a1545;
+  --accent-gradient-via:  #1e1030;
+  --accent-gradient-to:   #150b22;
+  --accent-line-color:    rgba(216,180,254,0.20);
+  --accent-line-bg:       rgba(216,180,254,0.30);
+  --accent-hr-bg:         rgba(192,132,252,0.50);
+}
+
+[data-theme="light"][data-accent="purple"] {
+  --accent-primary:       #9333ea;
+  --accent-primary-hover: #a855f7;
+  --accent-primary-text:  #ffffff;
+  --accent-soft-bg:       rgba(147,51,234,0.09);
+  --accent-soft-border:   rgba(147,51,234,0.25);
+  --accent-soft-border-hover: rgba(147,51,234,0.40);
+  --accent-glow:          rgba(147,51,234,0.10);
+  --accent-glow-card:     rgba(147,51,234,0.03);
+  --accent-glow-card-hover: rgba(147,51,234,0.08);
+  --accent-text:          #9333ea;
+  --accent-text-muted:    rgba(147,51,234,0.70);
+  --accent-shadow:        rgba(88,28,135,0.20);
+  --accent-gradient-from: #f3e8ff;
+  --accent-gradient-via:  #faf5ff;
+  --accent-gradient-to:   #f8fafc;
+  --accent-line-color:    rgba(147,51,234,0.15);
+  --accent-line-bg:       rgba(147,51,234,0.25);
+  --accent-hr-bg:         rgba(168,85,247,0.40);
+}
+
+/* ================================================================
+   ACCENT PALETTE — SEA GREEN
+   ================================================================ */
+[data-accent="seagreen"] {
+  --accent-50:      #ecfdf5;
+  --accent-200:     #a7f3d0;
+  --accent-300:     #6ee7b7;
+  --accent-400:     #34d399;
+  --accent-500:     #10b981;
+  --accent-600:     #059669;
+  --accent-900:     #064e3b;
+
+  --accent-primary:       #10b981;
+  --accent-primary-hover: #34d399;
+  --accent-primary-text:  #ffffff;
+  --accent-soft-bg:       rgba(16,185,129,0.07);
+  --accent-soft-border:   rgba(52,211,153,0.20);
+  --accent-soft-border-hover: rgba(52,211,153,0.30);
+  --accent-glow:          rgba(5,150,105,0.16);
+  --accent-glow-card:     rgba(16,185,129,0.04);
+  --accent-glow-card-hover: rgba(16,185,129,0.10);
+  --accent-text:          #6ee7b7;
+  --accent-text-muted:    rgba(110,231,183,0.80);
+  --accent-shadow:        rgba(6,78,59,0.40);
+  --accent-gradient-from: #0d2f22;
+  --accent-gradient-via:  #0a1f17;
+  --accent-gradient-to:   #071510;
+  --accent-line-color:    rgba(110,231,183,0.20);
+  --accent-line-bg:       rgba(110,231,183,0.30);
+  --accent-hr-bg:         rgba(52,211,153,0.50);
+}
+
+[data-theme="light"][data-accent="seagreen"] {
+  --accent-primary:       #059669;
+  --accent-primary-hover: #10b981;
+  --accent-primary-text:  #ffffff;
+  --accent-soft-bg:       rgba(5,150,105,0.09);
+  --accent-soft-border:   rgba(5,150,105,0.25);
+  --accent-soft-border-hover: rgba(5,150,105,0.40);
+  --accent-glow:          rgba(5,150,105,0.10);
+  --accent-glow-card:     rgba(5,150,105,0.03);
+  --accent-glow-card-hover: rgba(5,150,105,0.08);
+  --accent-text:          #059669;
+  --accent-text-muted:    rgba(5,150,105,0.70);
+  --accent-shadow:        rgba(6,78,59,0.20);
+  --accent-gradient-from: #d1fae5;
+  --accent-gradient-via:  #ecfdf5;
+  --accent-gradient-to:   #f8fafc;
+  --accent-line-color:    rgba(5,150,105,0.15);
+  --accent-line-bg:       rgba(5,150,105,0.25);
+  --accent-hr-bg:         rgba(16,185,129,0.40);
+}
+
+/* ================================================================
+   GLOBAL RESETS
+   ================================================================ */
 * {
   box-sizing: border-box;
 }
@@ -21,6 +307,9 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  color: var(--text-primary);
+  background: var(--bg-base);
+  transition: background 0.25s ease, color 0.25s ease;
 }
 
 button,
@@ -35,5 +324,5 @@ a {
 
 ::selection {
   color: #ffffff;
-  background: #2563eb;
+  background: var(--accent-primary);
 }
