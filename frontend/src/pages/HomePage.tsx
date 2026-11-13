@@ -8,7 +8,7 @@ import CTASection from "../features/home/CTASection";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-[#080d18] text-slate-100">
+    <div className="min-h-screen" style={{ background: "var(--bg-base)", color: "var(--text-primary)" }}>
       <Header />
 
       <main>
