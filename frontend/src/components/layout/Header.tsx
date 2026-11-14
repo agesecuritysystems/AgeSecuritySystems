@@ -9,25 +9,50 @@ const links = [
 ];
 
 const accentOptions: { value: Accent; label: string; dot: string }[] = [
-  { value: "blue",      label: "Blue",      dot: "#3b82f6" },
-  { value: "purple",    label: "Purple",    dot: "#a855f7" },
-  { value: "seagreen",  label: "Sea Green", dot: "#10b981" },
+  { value: "blue",     label: "Blue",      dot: "#3b82f6" },
+  { value: "purple",   label: "Purple",    dot: "#a855f7" },
+  { value: "seagreen", label: "Sea Green", dot: "#10b981" },
 ];
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { theme, accent, toggleTheme, setAccent } = useTheme();
 
+  /*
+   * Header always sits over the dark video background (dark glass overlay).
+   * → dark bg  : bold white text
+   * → light bg : bold near-black text
+   */
+  const isDark = theme === "dark";
+
+  const hdrBg      = isDark ? "rgba(10, 15, 30, 0.60)" : "rgba(240, 244, 248, 0.60)";
+  const hdrBorder  = isDark ? "rgba(255,255,255,0.12)"  : "rgba(0,0,0,0.10)";
+
+  /* Primary text — bold, high contrast */
+  const hdrPrimary  = isDark ? "#ffffff"  : "#0f172a";
+  /* Secondary / nav links — slightly softer but still crisp */
+  const hdrSecond   = isDark ? "#e2e8f0"  : "#1e293b";
+  /* Hover on nav links */
+  const hdrHover    = isDark ? "#ffffff"  : "#000000";
+  /* Subtext under logo */
+  const hdrMuted    = isDark ? "#94a3b8"  : "#475569";
+  /* Mobile menu border */
+  const hdrMobileBorder = isDark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.08)";
+  /* Theme-toggle icon button */
+  const hdrToggleBg     = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)";
+  const hdrToggleBorder = isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.12)";
+
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl"
+      className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl transition-colors duration-300"
       style={{
-        borderBottom: "1px solid rgba(255,255,255,0.12)",
-        background: "rgba(10, 15, 30, 0.60)",
+        borderBottom: `1px solid ${hdrBorder}`,
+        background: hdrBg,
       }}
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
-        {/* Logo */}
+
+        {/* ── Logo ── */}
         <a href="#" className="flex items-center gap-3" aria-label="AgeSecuritySystems home">
           <div
             className="flex h-10 w-10 items-center justify-center rounded-xl"
@@ -44,36 +69,37 @@ export default function Header() {
           </div>
           <div>
             <span
-              className="block text-base font-semibold tracking-tight sm:text-lg"
-              style={{ color: "var(--text-primary)" }}
+              className="block text-base font-bold tracking-tight sm:text-lg"
+              style={{ color: hdrPrimary }}
             >
               AgeSecuritySystems
             </span>
             <span
               className="text-[10px] font-medium uppercase tracking-[0.2em]"
-              style={{ color: "var(--text-muted)" }}
+              style={{ color: hdrMuted }}
             >
               Security. Simplified.
             </span>
           </div>
         </a>
 
-        {/* Desktop nav */}
+        {/* ── Desktop nav ── */}
         <div className="hidden items-center gap-6 md:flex">
+
           {links.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="text-sm transition"
-              style={{ color: "var(--text-secondary)" }}
-              onMouseEnter={e => (e.currentTarget.style.color = "var(--text-primary)")}
-              onMouseLeave={e => (e.currentTarget.style.color = "var(--text-secondary)")}
+              className="text-sm font-semibold transition"
+              style={{ color: hdrSecond }}
+              onMouseEnter={e => (e.currentTarget.style.color = hdrHover)}
+              onMouseLeave={e => (e.currentTarget.style.color = hdrSecond)}
             >
               {link.label}
             </a>
           ))}
 
-          {/* ── Accent colour picker (light mode only) ── */}
+          {/* Accent colour picker (light mode only) */}
           {theme === "light" && (
             <div className="flex items-center gap-2" title="Choose accent colour">
               {accentOptions.map((opt) => (
@@ -95,25 +121,23 @@ export default function Header() {
             </div>
           )}
 
-          {/* ── Dark / Light toggle ── */}
+          {/* Dark / Light toggle */}
           <button
             onClick={toggleTheme}
-            aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
             className="flex h-9 w-9 items-center justify-center rounded-lg transition"
             style={{
-              border: "1px solid var(--border-mid)",
-              background: "var(--accent-soft-bg)",
-              color: "var(--text-primary)",
+              border: `1px solid ${hdrToggleBorder}`,
+              background: hdrToggleBg,
+              color: hdrPrimary,
             }}
           >
-            {theme === "dark" ? (
-              /* Sun icon */
+            {isDark ? (
               <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4" stroke="currentColor" strokeWidth="2">
                 <circle cx="12" cy="12" r="4" />
                 <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
               </svg>
             ) : (
-              /* Moon icon */
               <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4" stroke="currentColor" strokeWidth="2">
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
               </svg>
@@ -123,10 +147,10 @@ export default function Header() {
           {/* CTA button */}
           <a
             href="#contact"
-            className="rounded-lg px-5 py-3 text-sm font-semibold transition"
+            className="rounded-lg px-5 py-3 text-sm font-bold transition"
             style={{
               background: "var(--accent-primary)",
-              color: "var(--accent-primary-text)",
+              color: "#ffffff",
             }}
             onMouseEnter={e => (e.currentTarget.style.background = "var(--accent-primary-hover)")}
             onMouseLeave={e => (e.currentTarget.style.background = "var(--accent-primary)")}
@@ -135,13 +159,13 @@ export default function Header() {
           </a>
         </div>
 
-        {/* Mobile menu toggle */}
+        {/* ── Mobile menu toggle ── */}
         <button
           type="button"
-          className="rounded-lg px-3 py-2 text-sm md:hidden"
+          className="rounded-lg px-3 py-2 text-sm font-semibold md:hidden"
           style={{
-            border: "1px solid var(--border-mid)",
-            color: "var(--text-primary)",
+            border: `1px solid ${hdrToggleBorder}`,
+            color: hdrPrimary,
           }}
           aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
           aria-expanded={menuOpen}
@@ -151,11 +175,15 @@ export default function Header() {
         </button>
       </nav>
 
-      {/* Mobile drawer */}
+      {/* ── Mobile drawer ── */}
       {menuOpen && (
         <div
           className="px-5 py-4 md:hidden"
-          style={{ borderTop: "1px solid var(--border-mid)" }}
+          style={{
+            borderTop: `1px solid ${hdrMobileBorder}`,
+            background: hdrBg,
+            backdropFilter: "blur(16px)",
+          }}
         >
           <div className="mx-auto flex max-w-7xl flex-col gap-4">
             {links.map((link) => (
@@ -163,8 +191,8 @@ export default function Header() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
-                className="text-sm"
-                style={{ color: "var(--text-secondary)" }}
+                className="text-sm font-semibold"
+                style={{ color: hdrSecond }}
               >
                 {link.label}
               </a>
@@ -173,7 +201,7 @@ export default function Header() {
             {/* Mobile accent picker (light only) */}
             {theme === "light" && (
               <div className="flex items-center gap-3 py-1">
-                <span className="text-xs" style={{ color: "var(--text-muted)" }}>Colour:</span>
+                <span className="text-xs font-semibold" style={{ color: hdrMuted }}>Colour:</span>
                 {accentOptions.map((opt) => (
                   <button
                     key={opt.value}
@@ -196,19 +224,19 @@ export default function Header() {
             {/* Mobile theme toggle */}
             <button
               onClick={toggleTheme}
-              className="flex items-center gap-2 text-sm"
-              style={{ color: "var(--text-secondary)" }}
+              className="flex items-center gap-2 text-sm font-semibold"
+              style={{ color: hdrSecond }}
             >
-              {theme === "dark" ? "☀ Light mode" : "🌙 Dark mode"}
+              {isDark ? "☀ Light mode" : "🌙 Dark mode"}
             </button>
 
             <a
               href="#contact"
               onClick={() => setMenuOpen(false)}
-              className="rounded-lg px-5 py-3 text-center text-sm font-semibold"
+              className="rounded-lg px-5 py-3 text-center text-sm font-bold"
               style={{
                 background: "var(--accent-primary)",
-                color: "var(--accent-primary-text)",
+                color: "#ffffff",
               }}
             >
               Get a Quote ↗
