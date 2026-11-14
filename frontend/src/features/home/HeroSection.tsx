@@ -21,7 +21,7 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section className="relative isolate overflow-hidden" style={{ minHeight: "92vh" }}>
+    <section className="relative isolate overflow-hidden" style={{ minHeight: "100vh", paddingTop: "72px" }}>
 
       {/* ── Layer 1: Background IMAGE (always visible, loads instantly) ── */}
       <div
