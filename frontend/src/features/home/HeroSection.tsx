@@ -1,260 +1,163 @@
+import { useEffect, useRef, useState } from "react";
 
 export default function HeroSection() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoReady, setVideoReady] = useState(false);
+
+  /* Once the video has enough data, fade it in over the poster image */
+  useEffect(() => {
+    const vid = videoRef.current;
+    if (!vid) return;
+
+    const handleCanPlay = () => setVideoReady(true);
+
+    if (vid.readyState >= 3) {
+      setVideoReady(true);
+    } else {
+      vid.addEventListener("canplaythrough", handleCanPlay);
+    }
+
+    return () => vid.removeEventListener("canplaythrough", handleCanPlay);
+  }, []);
+
   return (
-    <section className="relative isolate overflow-hidden">
-      {/* Background radial glow */}
+    <section className="relative isolate overflow-hidden" style={{ minHeight: "92vh" }}>
+
+      {/* ── Layer 1: Background IMAGE (always visible, loads instantly) ── */}
       <div
-        className="pointer-events-none absolute inset-0 -z-10"
+        className="absolute inset-0 -z-20"
         style={{
-          background: `radial-gradient(ellipse at 75% 25%, var(--accent-glow), transparent 38%)`,
-        }}
-      />
-      {/* Top hairline gradient */}
-      <div
-        className="pointer-events-none absolute left-1/2 top-0 -z-10 h-px w-3/4 -translate-x-1/2"
-        style={{
-          background: `linear-gradient(to right, transparent, var(--accent-line-bg), transparent)`,
+          backgroundImage: `url('/images/hero-img.png')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       />
 
-      <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 py-20 sm:px-8 sm:py-28 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12 lg:py-32">
-        {/* Left column */}
-        <div>
-          {/* Badge */}
-          <div
-            className="mb-7 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-medium tracking-wide"
-            style={{
-              border: "1px solid var(--accent-soft-border)",
-              background: "var(--accent-soft-bg)",
-              color: "var(--accent-text)",
-            }}
-          >
-            <span
-              className="h-2 w-2 rounded-full"
-              style={{ background: "var(--status-dot)" }}
-            />
-            SECURITY BUILT AROUND YOU
-          </div>
+      {/* ── Layer 2: Background VIDEO (fades in over image once ready) ── */}
+      <video
+        ref={videoRef}
+        className="absolute inset-0 -z-10 h-full w-full object-cover"
+        style={{
+          opacity: videoReady ? 1 : 0,
+          transition: "opacity 1.4s ease",
+        }}
+        src="/videos/hero-v1.mp4"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+      />
 
-          <h1
-            className="max-w-2xl text-4xl font-semibold leading-[1.12] tracking-tight sm:text-5xl lg:text-7xl"
-            style={{ color: "var(--text-primary)" }}
-          >
-            Confidence starts with{" "}
-            <span
-              style={{
-                background: `linear-gradient(to right, var(--accent-text), var(--accent-200, #bfdbfe), var(--text-primary))`,
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}
-            >
-              feeling secure.
-            </span>
-          </h1>
+      {/* ── Layer 3: 50% Glass overlay ── */}
+      <div
+        className="absolute inset-0 -z-[5]"
+        style={{
+          background: "rgba(0, 0, 0, 0.50)",
+          backdropFilter: "blur(2px)",
+          WebkitBackdropFilter: "blur(2px)",
+        }}
+      />
 
-          <p
-            className="mt-7 max-w-xl text-base leading-8 sm:text-lg"
-            style={{ color: "var(--text-secondary)" }}
-          >
-            Smarter security solutions for the spaces, people, and things that
-            matter most. Discover protection designed around your needs.
-          </p>
+      {/* ── Layer 4: Accent radial glow on top of overlay ── */}
+      <div
+        className="pointer-events-none absolute inset-0 -z-[4]"
+        style={{
+          background: `radial-gradient(ellipse at 60% 40%, var(--accent-glow), transparent 55%)`,
+        }}
+      />
 
-          {/* CTA buttons */}
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <a
-              href="#contact"
-              className="inline-flex items-center justify-center gap-3 rounded-xl px-6 py-4 text-sm font-semibold transition hover:-translate-y-0.5"
-              style={{
-                background: "var(--accent-primary)",
-                color: "var(--accent-primary-text)",
-                boxShadow: `0 10px 30px var(--accent-shadow)`,
-              }}
-              onMouseEnter={e => (e.currentTarget.style.background = "var(--accent-primary-hover)")}
-              onMouseLeave={e => (e.currentTarget.style.background = "var(--accent-primary)")}
-            >
-              Discuss Your Requirements <span>↗</span>
-            </a>
-            <a
-              href="#services"
-              className="inline-flex items-center justify-center rounded-xl px-6 py-4 text-sm font-medium transition"
-              style={{
-                border: "1px solid var(--border-mid)",
-                color: "var(--text-secondary)",
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.borderColor = "var(--border-subtle)";
-                e.currentTarget.style.background = "var(--accent-soft-bg)";
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.borderColor = "var(--border-mid)";
-                e.currentTarget.style.background = "transparent";
-              }}
-            >
-              Explore Solutions
-            </a>
-          </div>
+      {/* ── Content: centered hero text ── */}
+      <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center justify-center px-5 py-32 text-center sm:px-8 sm:py-40 lg:py-52">
 
-          {/* Trust badges */}
-          <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs" style={{ color: "var(--text-muted)" }}>
-            <span className="flex items-center gap-2">
-              <span style={{ color: "var(--accent-text)" }}>✓</span> Tailored solutions
-            </span>
-            <span className="flex items-center gap-2">
-              <span style={{ color: "var(--accent-text)" }}>✓</span> Professional guidance
-            </span>
-            <span className="flex items-center gap-2">
-              <span style={{ color: "var(--accent-text)" }}>✓</span> Customer-focused service
-            </span>
-          </div>
+        {/* Badge */}
+        <div
+          className="mb-8 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-medium tracking-wide"
+          style={{
+            border: "1px solid rgba(255,255,255,0.18)",
+            background: "rgba(255,255,255,0.08)",
+            backdropFilter: "blur(8px)",
+            color: "#e2e8f0",
+          }}
+        >
+          <span className="h-2 w-2 rounded-full" style={{ background: "var(--status-dot)" }} />
+          SECURITY BUILT AROUND YOU
         </div>
 
-        {/* Right column — demo card */}
-        <div className="relative mx-auto w-full max-w-lg">
-          {/* Card glow */}
-          <div
-            className="absolute -inset-6 rounded-[2rem] blur-3xl"
-            style={{ background: "var(--accent-soft-bg)" }}
-          />
-
-          <div
-            className="relative overflow-hidden rounded-2xl shadow-2xl"
+        {/* H1 */}
+        <h1
+          className="max-w-3xl text-4xl font-semibold leading-[1.1] tracking-tight text-white sm:text-6xl lg:text-7xl"
+        >
+          Confidence starts with{" "}
+          <span
             style={{
-              border: "1px solid var(--border-mid)",
-              background: "var(--bg-surface)",
+              background: `linear-gradient(to right, var(--accent-text), #fff)`,
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
             }}
           >
-            {/* Card header */}
-            <div
-              className="flex items-center justify-between px-5 py-4"
-              style={{ borderBottom: "1px solid var(--border-subtle)" }}
-            >
-              <div>
-                <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
-                  Security overview
-                </p>
-                <p className="mt-1 text-xs" style={{ color: "var(--text-muted)" }}>
-                  A clearer view of your space
-                </p>
-              </div>
-              <span
-                className="flex items-center gap-2 rounded-full px-3 py-1.5 text-xs"
-                style={{
-                  border: "1px solid var(--status-border)",
-                  background: "var(--status-bg)",
-                  color: "var(--status-text)",
-                }}
-              >
-                <span
-                  className="h-1.5 w-1.5 rounded-full"
-                  style={{ background: "var(--status-dot)" }}
-                />
-                Illustrative
-              </span>
-            </div>
+            feeling secure.
+          </span>
+        </h1>
 
-            {/* Stats grid */}
-            <div className="grid grid-cols-2 gap-3 p-4">
-              <div
-                className="rounded-xl p-4"
-                style={{
-                  border: "1px solid var(--border-subtle)",
-                  background: "var(--accent-soft-bg)",
-                }}
-              >
-                <div
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-lg"
-                  style={{ background: "var(--accent-soft-bg)", color: "var(--accent-text)" }}
-                >
-                  ◉
-                </div>
-                <p className="mt-4 text-xs" style={{ color: "var(--text-muted)" }}>Video monitoring</p>
-                <p className="mt-1 text-sm font-medium" style={{ color: "var(--text-primary)" }}>Stay informed</p>
-              </div>
-              <div
-                className="rounded-xl p-4"
-                style={{
-                  border: "1px solid var(--border-subtle)",
-                  background: "var(--accent-soft-bg)",
-                }}
-              >
-                <div
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-lg"
-                  style={{ background: "var(--status-bg)", color: "var(--status-text)" }}
-                >
-                  ⌁
-                </div>
-                <p className="mt-4 text-xs" style={{ color: "var(--text-muted)" }}>Access control</p>
-                <p className="mt-1 text-sm font-medium" style={{ color: "var(--text-primary)" }}>Manage access</p>
-              </div>
-            </div>
+        {/* Paragraph */}
+        <p className="mt-7 max-w-xl text-base leading-8 text-slate-200 sm:text-lg">
+          Smarter security solutions for the spaces, people, and things that
+          matter most. Discover protection designed around your needs.
+        </p>
 
-            {/* Gradient banner */}
-            <div className="px-4 pb-4">
-              <div
-                className="relative flex min-h-52 flex-col justify-between overflow-hidden rounded-xl p-5"
-                style={{
-                  border: "1px solid var(--accent-soft-border)",
-                  background: `linear-gradient(135deg, var(--accent-gradient-from), var(--accent-gradient-via), var(--accent-gradient-to))`,
-                }}
-              >
-                <div
-                  className="absolute inset-0 opacity-20"
-                  style={{
-                    backgroundImage: `linear-gradient(var(--accent-line-color) 1px, transparent 1px), linear-gradient(90deg, var(--accent-line-color) 1px, transparent 1px)`,
-                    backgroundSize: "28px 28px",
-                  }}
-                />
-                <div className="relative flex items-start justify-between">
-                  <span
-                    className="text-xs font-medium uppercase tracking-[0.18em]"
-                    style={{ color: "var(--accent-text-muted)" }}
-                  >
-                    Protection, connected
-                  </span>
-                  <svg viewBox="0 0 24 24" fill="none" className="h-7 w-7" style={{ color: "var(--accent-text)" }} stroke="currentColor" strokeWidth="1.3">
-                    <path d="M12 3 20 6v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-3Z" />
-                    <path d="m8.5 12 2.3 2.3 4.8-5" />
-                  </svg>
-                </div>
-                <div className="relative mt-8">
-                  <p className="text-2xl font-semibold tracking-tight" style={{ color: "var(--text-primary)" }}>
-                    Designed for peace of mind.
-                  </p>
-                  <p className="mt-2 text-sm leading-6" style={{ color: "var(--text-secondary)" }}>
-                    The right solution begins with understanding your space.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Card footer */}
-            <div
-              className="px-5 py-4"
-              style={{ borderTop: "1px solid var(--border-subtle)" }}
-            >
-              <p className="text-xs leading-5" style={{ color: "var(--text-muted)" }}>
-                Concept preview only. No live cameras, monitoring, or connected security devices are shown here.
-              </p>
-            </div>
-          </div>
-
-          {/* Floating badge */}
-          <div
-            className="absolute -bottom-5 -left-3 hidden rounded-xl px-4 py-3 shadow-xl sm:block"
+        {/* CTA Buttons */}
+        <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row">
+          <a
+            href="#contact"
+            className="inline-flex items-center justify-center gap-3 rounded-xl px-7 py-4 text-sm font-semibold text-white transition hover:-translate-y-0.5"
             style={{
-              border: "1px solid var(--border-mid)",
-              background: "var(--bg-elevated)",
+              background: "var(--accent-primary)",
+              boxShadow: `0 10px 40px var(--accent-shadow)`,
             }}
+            onMouseEnter={e => (e.currentTarget.style.background = "var(--accent-primary-hover)")}
+            onMouseLeave={e => (e.currentTarget.style.background = "var(--accent-primary)")}
           >
-            <p className="text-xs" style={{ color: "var(--text-secondary)" }}>Our approach</p>
-            <p className="mt-1 text-sm font-medium" style={{ color: "var(--text-primary)" }}>
-              Protection with purpose
-            </p>
-          </div>
+            Discuss Your Requirements <span>↗</span>
+          </a>
+          <a
+            href="#services"
+            className="inline-flex items-center justify-center rounded-xl px-7 py-4 text-sm font-medium text-slate-100 transition"
+            style={{
+              border: "1px solid rgba(255,255,255,0.20)",
+              background: "rgba(255,255,255,0.07)",
+              backdropFilter: "blur(6px)",
+            }}
+            onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.14)")}
+            onMouseLeave={e => (e.currentTarget.style.background = "rgba(255,255,255,0.07)")}
+          >
+            Explore Solutions
+          </a>
+        </div>
+
+        {/* Trust chips */}
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs text-slate-300">
+          <span className="flex items-center gap-2">
+            <span style={{ color: "var(--accent-text)" }}>✓</span> Tailored solutions
+          </span>
+          <span className="flex items-center gap-2">
+            <span style={{ color: "var(--accent-text)" }}>✓</span> Professional guidance
+          </span>
+          <span className="flex items-center gap-2">
+            <span style={{ color: "var(--accent-text)" }}>✓</span> Customer-focused service
+          </span>
         </div>
       </div>
+
+      {/* Bottom fade into next section */}
+      <div
+        className="pointer-events-none absolute bottom-0 left-0 right-0 h-32"
+        style={{
+          background: "linear-gradient(to bottom, transparent, var(--bg-base))",
+        }}
+      />
     </section>
   );
 }
