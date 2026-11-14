@@ -22,8 +22,8 @@ export default function Header() {
     <header
       className="sticky top-0 z-50 backdrop-blur-xl"
       style={{
-        borderBottom: "1px solid var(--border-mid)",
-        background: `color-mix(in srgb, var(--bg-base) 90%, transparent)`,
+        borderBottom: "1px solid rgba(255,255,255,0.10)",
+        background: `color-mix(in srgb, var(--bg-base) 40%, transparent)`,
       }}
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
